@@ -22,6 +22,7 @@ public interface UserService {
     ResponseDTO getUserInfo(String email);
     ResponseDTO getAllUser();
     ResponseDTO updateUserInfo(UserInfoDTO userInfoDTO);
+    ResponseDTO getAllProvinces();
 }
 
 @Service
@@ -75,5 +76,11 @@ class UserServiceImpl extends BaseService implements UserService {
         {
             return new ResponseDTO(false, "Có lỗi xảy ra!", null);
         }
+    }
+
+    @Override
+    public ResponseDTO getAllProvinces() {
+        List<ProvinceDTO> provinceDTOS = provinceRepository.getAll();
+        return new ResponseDTO(true, "OK!", provinceDTOS);
     }
 }

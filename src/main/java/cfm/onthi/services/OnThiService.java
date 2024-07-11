@@ -28,7 +28,6 @@ class OnThiServiceImpl extends BaseService implements OnThiService {
     }
 
     public ResponseDTO getUerInfoService(RegisterDTO registerDTO) {
-
         return new ResponseDTO(true, "", null);
     }
 }

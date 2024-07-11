@@ -119,6 +119,10 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements BaseRepository<Us
             condition = condition.and(user.ID_SCHOOL.eq(inputCondition.ID_SCHOOL));
         }
 
+        if (inputCondition.LIST_ID_SCHOOL != null) {
+            condition = condition.and(user.ID_SCHOOL.in(inputCondition.LIST_ID_SCHOOL));
+        }
+
         List<UserInfoDTO> userInfoDTOList = dslContext.select()
                 .from(user).where(condition).fetch()
                 .stream()

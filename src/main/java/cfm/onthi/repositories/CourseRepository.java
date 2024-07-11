@@ -2,6 +2,7 @@ package cfm.onthi.repositories;
 
 import cfm.onthi.dtos.CourseDTO;
 import cfm.onthi.dtos.LessonDTO;
+import cfm.onthi.dtos.SchoolDTO;
 import cfm.onthi.dtos.UserInfoDTO;
 import cfm.onthi.dtos.base.InputCondition;
 import cfm.onthi.entities.tables.OtCourse;
@@ -48,6 +49,7 @@ class CourseRepositoryImpl extends BaseRepositoryImpl implements BaseRepository<
     LessonRepository lessonRepository;
     QuizRepository quizRepository;
     ReviewRepository reviewRepository;
+    SchoolRepository schoolRepository;
 
     public CourseRepositoryImpl(@Qualifier(DefineProperties.DSLContextOnThi) DSLContext dslContext,
                                 @Qualifier(DefineProperties.entityManagerOnThi) EntityManager entityManager,
@@ -55,13 +57,15 @@ class CourseRepositoryImpl extends BaseRepositoryImpl implements BaseRepository<
                                 UserRepository userRepository,
                                 LessonRepository lessonRepository,
                                 QuizRepository quizRepository,
-                                ReviewRepository reviewRepository
+                                ReviewRepository reviewRepository,
+                                SchoolRepository schoolRepository
     ) {
         super(dslContext, entityManager);
         this.userRepository = userRepository;
         this.lessonRepository = lessonRepository;
         this.quizRepository = quizRepository;
         this.reviewRepository = reviewRepository;
+        this.schoolRepository = schoolRepository;
     }
 
     @Override
@@ -145,9 +149,17 @@ class CourseRepositoryImpl extends BaseRepositoryImpl implements BaseRepository<
         }
 
         List<Long> teacherIds = new ArrayList<>();
+        InputCondition inputConditionFindUserIds = new InputCondition();
         if (inputCondition.USERNAME != null && !inputCondition.USERNAME.isBlank() && !inputCondition.USERNAME.isEmpty()) {
-            InputCondition inputConditionFindUserIds = new InputCondition();
             inputConditionFindUserIds.USERNAME = inputCondition.USERNAME;
+            if (inputCondition.LIST_ID_PROVINCE != null) {
+                List<Long> schoolIds = new ArrayList<>();
+                InputCondition inputConditionSchool = new InputCondition();
+                inputConditionSchool.LIST_ID_PROVINCE = inputCondition.LIST_ID_PROVINCE;
+                List<SchoolDTO> schoolDTOList = schoolRepository.getListByInputCondition(inputConditionSchool);
+                schoolIds = schoolDTOList.stream().map(SchoolDTO::getIdSchool).collect(Collectors.toList());
+                inputConditionFindUserIds.LIST_ID_SCHOOL = schoolIds;
+            }
             List<UserInfoDTO> teachers = userRepository.getListByInputCondition(inputConditionFindUserIds);
 
             teacherIds = teachers.stream().map(UserInfoDTO::getIdUser).collect(Collectors.toList());
@@ -155,6 +167,23 @@ class CourseRepositoryImpl extends BaseRepositoryImpl implements BaseRepository<
             // Add condition to filter courses by teacher IDs
             if (!teacherIds.isEmpty()) {
                 condition = condition.and(course.ID_TEACHER.in(teacherIds));
+            }
+        } else {
+            if (!inputCondition.LIST_ID_PROVINCE.isEmpty() && inputCondition.LIST_ID_PROVINCE != null) {
+                List<Long> schoolIds = new ArrayList<>();
+                InputCondition inputConditionSchool = new InputCondition();
+                inputConditionSchool.LIST_ID_PROVINCE = inputCondition.LIST_ID_PROVINCE;
+                List<SchoolDTO> schoolDTOList = schoolRepository.getListByInputCondition(inputConditionSchool);
+                schoolIds = schoolDTOList.stream().map(SchoolDTO::getIdSchool).collect(Collectors.toList());
+                inputConditionFindUserIds.LIST_ID_SCHOOL = schoolIds;
+                List<UserInfoDTO> teachers = userRepository.getListByInputCondition(inputConditionFindUserIds);
+
+                teacherIds = teachers.stream().map(UserInfoDTO::getIdUser).collect(Collectors.toList());
+
+                // Add condition to filter courses by teacher IDs
+                if (!teacherIds.isEmpty()) {
+                    condition = condition.and(course.ID_TEACHER.in(teacherIds));
+                }
             }
         }
 

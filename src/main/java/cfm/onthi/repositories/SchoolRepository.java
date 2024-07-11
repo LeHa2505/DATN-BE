@@ -14,12 +14,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.jooq.impl.DSL.trueCondition;
 
-public interface SchoolRepository extends BaseRepository<SchoolDTO>{
+public interface SchoolRepository extends BaseRepository<SchoolDTO> {
 }
 
 @Lazy
@@ -44,7 +45,29 @@ class SchoolRepositoryImpl extends BaseRepositoryImpl implements BaseRepository<
 
     @Override
     public List<SchoolDTO> getListByInputCondition(@NotNull InputCondition inputCondition) {
-        return List.of();
+        Condition condition = trueCondition();
+
+        if (inputCondition.LIST_ID_PROVINCE != null || !inputCondition.LIST_ID_PROVINCE.isEmpty()) {
+            condition = condition.and(otSchool.ID_PROVINCE.in(inputCondition.LIST_ID_PROVINCE));
+        }
+
+        List<SchoolDTO> schoolDTOS = dslContext.select()
+                .from(otSchool).where(condition).fetch()
+                .stream()
+                .collect(Collectors.groupingBy(record -> record.into(otSchool), LinkedHashMap::new, Collectors.toList()))
+                .entrySet().stream()
+                .map(entry -> {
+                    SchoolDTO schoolDTO = new SchoolDTO();
+
+                    schoolDTO.idSchool = entry.getKey().getIdSchool();
+                    schoolDTO.idProvince = entry.getKey().getIdProvince();
+                    schoolDTO.schoolName = entry.getKey().getSchoolName();
+                    schoolDTO.typeSchool = entry.getKey().getTypeSchool();
+
+                    return schoolDTO;
+                }).collect(Collectors.toList());
+
+        return schoolDTOS;
     }
 
     @Override

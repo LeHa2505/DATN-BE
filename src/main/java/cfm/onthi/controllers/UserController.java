@@ -70,4 +70,9 @@ public class UserController {
     public ResponseEntity<?> deleteShort(@RequestBody Long id) throws IOException {
         return ResponseEntity.status(HttpStatus.OK).body((shortsService.deleteShort(id)));
     }
+
+    @GetMapping("/provinces")
+    public ResponseEntity<?> getAllProvinces() {
+        return ResponseEntity.status(HttpStatus.OK).body((userService.getAllProvinces()));
+    }
 }

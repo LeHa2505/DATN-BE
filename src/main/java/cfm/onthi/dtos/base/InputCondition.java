@@ -26,8 +26,14 @@ public class InputCondition {
     @JsonProperty(value = "ID_SCHOOL")
     public Long ID_SCHOOL;
 
+    @JsonProperty(value = "LIST_ID_SCHOOL")
+    public List<Long> LIST_ID_SCHOOL;
+
     @JsonProperty(value = "ID_PROVINCE")
     public Long ID_PROVINCE;
+
+    @JsonProperty(value = "LIST_ID_PROVINCE")
+    public List<Long> LIST_ID_PROVINCE;
 
     @JsonProperty(value = "PROVINCE_NAME")
     public String PROVINCE_NAME;

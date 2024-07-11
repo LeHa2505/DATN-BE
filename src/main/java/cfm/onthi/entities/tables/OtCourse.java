@@ -79,7 +79,7 @@ public class OtCourse extends TableImpl<OtCourseRecord> {
     /**
      * The column <code>s_onthi.ot_course.IS_SUBMITTED</code>.
      */
-    public final TableField<OtCourseRecord, Boolean> IS_SUBMITTED = createField(DSL.name("IS_SUBMITTED"), SQLDataType.BIT, this, "");
+    public final TableField<OtCourseRecord, Boolean> IS_SUBMITTED = createField(DSL.name("IS_SUBMITTED"), SQLDataType.BIT.nullable(false), this, "");
 
     /**
      * The column <code>s_onthi.ot_course.COURSE_NAME</code>.

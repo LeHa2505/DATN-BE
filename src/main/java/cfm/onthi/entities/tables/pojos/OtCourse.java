@@ -176,7 +176,7 @@ public class OtCourse implements Serializable {
     /**
      * Getter for <code>s_onthi.ot_course.IS_SUBMITTED</code>.
      */
-    @Column(name = "IS_SUBMITTED")
+    @Column(name = "IS_SUBMITTED", nullable = false)
     public Boolean getIsSubmitted() {
         return this.isSubmitted;
     }

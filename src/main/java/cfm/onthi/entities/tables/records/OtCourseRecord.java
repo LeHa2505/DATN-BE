@@ -112,7 +112,7 @@ public class OtCourseRecord extends UpdatableRecordImpl<OtCourseRecord> implemen
     /**
      * Getter for <code>s_onthi.ot_course.IS_SUBMITTED</code>.
      */
-    @Column(name = "IS_SUBMITTED")
+    @Column(name = "IS_SUBMITTED", nullable = false)
     public Boolean getIsSubmitted() {
         return (Boolean) get(4);
     }

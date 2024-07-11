@@ -34,7 +34,18 @@ class ProvinceRepositoryImpl extends BaseRepositoryImpl implements ProvinceRepos
 
     @Override
     public List<ProvinceDTO> getAll() {
-        return List.of();
+        List<ProvinceDTO> result = dslContext.select()
+                .from(otProvince)
+                .fetch()
+                .stream()
+                .map(record -> {
+                    ProvinceDTO provinceDTO = new ProvinceDTO();
+                    provinceDTO.idProvince = record.get(otProvince.ID_PROVINCE);
+                    provinceDTO.provinceName = record.get(otProvince.PROVINCE_NAME);
+                    return provinceDTO;
+                }).collect(Collectors.toList());
+
+        return result;
     }
 
     @Override
@@ -64,7 +75,7 @@ class ProvinceRepositoryImpl extends BaseRepositoryImpl implements ProvinceRepos
     @Override
     public ProvinceDTO getByID(@NotNull Long id) {
         Condition condition = trueCondition();
-        condition = condition.and(otProvince.ID_PROVINCE.like("%" + id + "%")); // Sử dụng LIKE với một mẫu đơn giản
+        condition = condition.and(otProvince.ID_PROVINCE.eq(id)); // Sử dụng LIKE với một mẫu đơn giản
 
         List<ProvinceDTO> result = dslContext.select()
                 .from(otProvince)
